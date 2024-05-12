@@ -1,0 +1,15 @@
+
+# Database Configs
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: product-service
+  application:
+    name: product-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

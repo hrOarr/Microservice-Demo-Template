@@ -1,0 +1,62 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8089/realms/spring-boot-microservice-realm
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/v1/products/**
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/v1/orders/**
+
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/v1/inventory/**
+
+        - id: discovery-service
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web/**
+          filters:
+            - SetPath=/
+
+        - id: discovery-service-static
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+
+        - id: openapi
+          uri: http://localhost:${server.port}
+          predicates:
+            - Path=/v3/api-docs/**
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        cloud:
+#          gateway: TRACE
+
+server:
+  port: 8181
